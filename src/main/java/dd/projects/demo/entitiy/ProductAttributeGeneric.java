@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "PRODUCT_ATTRIBUTE_GENERIC")
+@Table(name = "product_attribute_generic")
 public class ProductAttributeGeneric {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
