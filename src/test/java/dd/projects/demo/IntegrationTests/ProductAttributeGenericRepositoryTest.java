@@ -1,7 +1,7 @@
 package dd.projects.demo.IntegrationTests;
 
-import dd.projects.demo.entitiy.ProductAttributeGeneric;
-import dd.projects.demo.repositories.ProductAttributeGenericRepository;
+import dd.projects.demo.domain.entitiy.ProductAttributeGeneric;
+import dd.projects.demo.repository.ProductAttributeGenericRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
