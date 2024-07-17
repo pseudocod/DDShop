@@ -12,6 +12,6 @@ public interface AttributeValueGenericMapper {
     AttributeValueGenericMapper INSTANCE = Mappers.getMapper((AttributeValueGenericMapper.class));
     AttributeValueGeneric toEntity(AttributeValueGenericEditDto attributeValueGenericEditDto);
     AttributeValueGeneric toEntity(AttributeValueGenericCreateRequestDto attributeValueGenericCreateRequestDto);
-    AttributeValueGenericResponseDto toDto(AttributeValueGeneric attributeValueGeneric);
+    AttributeValueGenericResponseDto toRespponseDto(AttributeValueGeneric attributeValueGeneric);
     AttributeValueGenericSummaryDto toSummaryDto(AttributeValueGeneric attributeValueGeneric);
 }

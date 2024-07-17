@@ -59,7 +59,12 @@ public class CategoryController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<CategoryWithoutProductsResponseDto> editCategory(@PathVariable Long id, @RequestBody CategoryEditRequestDto dto) {
-        return new ResponseEntity<>(categoryService.editCategory(id, dto), HttpStatus.OK);
+        try {
+            CategoryWithoutProductsResponseDto updatedCategory = categoryService.editCategory(id, dto);
+            return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @DeleteMapping("/{id}")
