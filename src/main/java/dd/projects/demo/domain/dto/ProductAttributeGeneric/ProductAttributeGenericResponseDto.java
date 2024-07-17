@@ -1,4 +1,4 @@
-package dd.projects.demo.domain.dto.AttributeValueGeneric;
+package dd.projects.demo.domain.dto.ProductAttributeGeneric;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AttributeValueGenericSummary {
+public class ProductAttributeGenericResponseDto {
     private Long id;
-    private String value;
+    private String name;
 }

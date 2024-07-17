@@ -1,4 +1,4 @@
-package dd.projects.demo.domain.dto.Category;
+package dd.projects.demo.domain.dto.AttributeValueGeneric;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryEditRequestDto {
-    private String name;
-    private String description;
+public class AttributeValueGenericSummaryDto {
+    private Long id;
+    private String value;
 }

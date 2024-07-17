@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -25,8 +26,9 @@ public class Order {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id", nullable = false)
     private Cart cart;
+    @Enumerated(EnumType.STRING)
     @Column(name = "paymenttype", length = 50, nullable = false)
-    private String paymentType;
+    private PaymentType paymentType;
     @Column(name = "totalprice", precision = 10, scale = 2, nullable = false)
     private BigDecimal totalPrice;
     @Column(name = "orderdate", nullable = false)

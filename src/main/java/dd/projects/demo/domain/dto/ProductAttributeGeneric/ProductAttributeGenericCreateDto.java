@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductAttributeGenericDto {
-    private Long id;
+public class ProductAttributeGenericCreateDto {
     private String name;
 }

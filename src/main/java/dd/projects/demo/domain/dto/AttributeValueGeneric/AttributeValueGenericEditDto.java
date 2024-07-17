@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class AttributeValueGenericEditDto {
-    private Long id;
     private String value;
 }

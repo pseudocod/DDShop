@@ -31,9 +31,9 @@ public class Product {
     @Column(name = "addeddate", nullable = false)
     private LocalDate addedDate;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<ProductAttributeConcrete> productAttributes;
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<CartEntry> cartEntries;
