@@ -1,4 +1,4 @@
-package dd.projects.demo.domain.dto.CartEntrySumamryDto;
+package dd.projects.demo.domain.dto.CartEntry;
 
 import dd.projects.demo.domain.dto.Cart.CartSummaryDto;
 import dd.projects.demo.domain.dto.Product.ProductSummaryDto;
@@ -8,11 +8,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartEntryResponseDto {
+public class CartEntrySummaryDto {
     private Long id;
     private CartSummaryDto cart;
     private ProductSummaryDto product;

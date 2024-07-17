@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {CategoryMapper.class, ProductAttributeConcreteMapper.class})
+@Mapper(uses = {CategoryMapper.class, ProductAttributeConcreteMapper.class, CartEntryMapper.class})
 public interface ProductMapper {
     ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 

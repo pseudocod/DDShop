@@ -1,4 +1,4 @@
-package dd.projects.demo.domain.dto.CartEntrySumamryDto;
+package dd.projects.demo.domain.dto.CartEntry;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

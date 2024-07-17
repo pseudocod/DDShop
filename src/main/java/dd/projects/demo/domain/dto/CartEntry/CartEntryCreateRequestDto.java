@@ -1,7 +1,5 @@
-package dd.projects.demo.domain.dto.CartEntrySumamryDto;
+package dd.projects.demo.domain.dto.CartEntry;
 
-import dd.projects.demo.domain.dto.Cart.CartSummaryDto;
-import dd.projects.demo.domain.dto.Product.ProductSummaryDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,10 +11,9 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartEntrySummaryDto {
-    private Long id;
-    private CartSummaryDto cart;
-    private ProductSummaryDto product;
+public class CartEntryCreateRequestDto {
+    private Long cartId;
+    private Long productId;
     private Integer quantity;
     private BigDecimal pricePerPiece;
     private BigDecimal totalPriceEntry;

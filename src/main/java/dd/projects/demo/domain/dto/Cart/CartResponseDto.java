@@ -1,6 +1,6 @@
 package dd.projects.demo.domain.dto.Cart;
 
-import dd.projects.demo.domain.dto.CartEntrySumamryDto.CartEntrySummaryDto;
+import dd.projects.demo.domain.dto.CartEntry.CartEntrySummaryDto;
 import dd.projects.demo.domain.dto.Order.OrderSummaryDto;
 import dd.projects.demo.domain.dto.User.UserSummaryDto;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
 package dd.projects.demo.domain.dto.Product;
 
-import dd.projects.demo.domain.dto.CartEntrySumamryDto.CartEntrySummaryDto;
+import dd.projects.demo.domain.dto.CartEntry.CartEntrySummaryDto;
 import dd.projects.demo.domain.dto.Category.CategoryWithoutProductsResponseDto;
 import dd.projects.demo.domain.dto.ProductAttributeConcrete.ProductAttributeConcreteResponseDto;
 import lombok.AllArgsConstructor;
