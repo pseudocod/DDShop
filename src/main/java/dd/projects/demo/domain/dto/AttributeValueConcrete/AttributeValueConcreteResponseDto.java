@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AttributeValueConcreteResponseDto {
+    private Long id;
     private AttributeValueGenericSummaryDto attributeValueGenericResponseDto;
     private ProductAttributeGenericSummaryDto productAttributeGenericSummaryDto;
 }

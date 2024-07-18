@@ -23,19 +23,19 @@ public class AttributeValueGenericService {
     public AttributeValueGenericResponseDto getAttributeValueGenericById(Long id){
         AttributeValueGeneric attributeValueGeneric = attributeValueGenericRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Attribute value not found"));
-        return AttributeValueGenericMapper.INSTANCE.toRespponseDto(attributeValueGeneric);
+        return AttributeValueGenericMapper.INSTANCE.toResponseDto(attributeValueGeneric);
     }
 
     public List<AttributeValueGenericResponseDto> getAllAttributeValueGeneric() {
         return attributeValueGenericRepository.findAll().stream()
-                .map(AttributeValueGenericMapper.INSTANCE::toRespponseDto)
+                .map(AttributeValueGenericMapper.INSTANCE::toResponseDto)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public AttributeValueGenericResponseDto createAttributeValueGeneric(AttributeValueGenericCreateRequestDto dto) {
         AttributeValueGeneric attributeValueGeneric = AttributeValueGenericMapper.INSTANCE.toEntity(dto);
         AttributeValueGeneric savedAttributeValueGeneric = attributeValueGenericRepository.save(attributeValueGeneric);
-        return AttributeValueGenericMapper.INSTANCE.toRespponseDto(savedAttributeValueGeneric);
+        return AttributeValueGenericMapper.INSTANCE.toResponseDto(savedAttributeValueGeneric);
     }
     @Transactional
     public AttributeValueGenericResponseDto editAttributeValueGeneric(Long id, AttributeValueGenericEditDto attributeValueGenericEditDto) {
@@ -46,7 +46,7 @@ public class AttributeValueGenericService {
         existingAttributeValueGeneric.setValue(attributeValueGenericEditDto.getValue());
 
         AttributeValueGeneric updatedAttributeValueGeneric = attributeValueGenericRepository.save(existingAttributeValueGeneric);
-        return AttributeValueGenericMapper.INSTANCE.toRespponseDto(updatedAttributeValueGeneric);
+        return AttributeValueGenericMapper.INSTANCE.toResponseDto(updatedAttributeValueGeneric);
     }
 
     public void deleteAttributeValueGeneric(Long id) {

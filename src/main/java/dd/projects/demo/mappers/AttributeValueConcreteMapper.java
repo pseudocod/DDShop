@@ -19,7 +19,8 @@ public interface AttributeValueConcreteMapper {
     @Mapping(source = "attributeId", target = "attribute.id")
     @Mapping(source = "valueId", target = "value.id")
     AttributeValueConcrete toEntity(AttributeValueConcreteEditDto dto);
-
+    @Mapping(target = "productAttributeGenericSummaryDto", source = "attribute")
+    @Mapping(target = "attributeValueGenericResponseDto", source = "value")
     AttributeValueConcreteResponseDto toResponseDto(AttributeValueConcrete entity);
 
 }

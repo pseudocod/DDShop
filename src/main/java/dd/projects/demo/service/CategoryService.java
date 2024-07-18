@@ -5,8 +5,10 @@ import dd.projects.demo.domain.dto.Category.CategoryEditRequestDto;
 import dd.projects.demo.domain.dto.Category.CategoryWithProductsResponseDto;
 import dd.projects.demo.domain.dto.Category.CategoryWithoutProductsResponseDto;
 import dd.projects.demo.domain.entitiy.Category;
+import dd.projects.demo.domain.entitiy.Product;
 import dd.projects.demo.mappers.CategoryMapper;
 import dd.projects.demo.repository.CategoryRepository;
+import dd.projects.demo.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +18,14 @@ import java.util.stream.Collectors;
 @Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-
-    //    private final ProductService productService;
-    public CategoryService(CategoryRepository categoryRepository) {
+    private final ProductService productService;
+    private final ProductRepository productRepository;
+    public CategoryService(CategoryRepository categoryRepository,
+                           ProductService productService,
+                           ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
+        this.productService = productService;
+        this.productRepository = productRepository;
     }
 
     public CategoryWithoutProductsResponseDto getCategoryById(Long id) {
@@ -45,7 +51,7 @@ public class CategoryService {
                 .map(CategoryMapper.INSTANCE::toWithProductsResponseDto)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public CategoryWithoutProductsResponseDto createCategory(CategoryCreateRequestDto dto) {
         Category category = CategoryMapper.INSTANCE.toEntity(dto);
         Category savedCategory = categoryRepository.save(category);
@@ -69,14 +75,12 @@ public class CategoryService {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
-//        // Set category to null for all related products
-//        List<Product> products = category.getProducts();
-//        for (Product product : products) {
-//            product.setCategory(null);
-//            productRepository.save(product);
-//        }
+        List<Product> products = category.getProducts();
+        for (Product product : products) {
+            product.setCategory(null);
+            productRepository.save(product);
+        }
 
-        // Now delete the category
         categoryRepository.delete(category);
     }
 }

@@ -5,8 +5,8 @@ import dd.projects.demo.domain.dto.ProductAttributeGeneric.ProductAttributeGener
 import dd.projects.demo.domain.dto.ProductAttributeGeneric.ProductAttributeGenericResponseDto;
 import dd.projects.demo.domain.entitiy.ProductAttributeGeneric;
 import dd.projects.demo.mappers.ProductAttributeGenericMapper;
-import dd.projects.demo.mappers.ProductMapper;
 import dd.projects.demo.repository.ProductAttributeGenericRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,13 +30,14 @@ public class ProductAttributeGenericService {
                 .map(ProductAttributeGenericMapper.INSTANCE::toResponseDto)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public ProductAttributeGenericResponseDto createProductAttributeGeneric(ProductAttributeGenericCreateDto productAttributeGenericCreateDto) {
         ProductAttributeGeneric productAttributeGeneric = ProductAttributeGenericMapper.INSTANCE.toEntity(productAttributeGenericCreateDto);
         ProductAttributeGeneric savedProductAttributeGeneric = productAttributeGenericRepository.save(productAttributeGeneric);
         return ProductAttributeGenericMapper.INSTANCE.toResponseDto(savedProductAttributeGeneric);
     }
 
+    @Transactional
     public ProductAttributeGenericResponseDto editProductAttributeGeneric(Long id, ProductAttributeGenericEditDto productAttributeGenericEditDto) {
 
         ProductAttributeGeneric existingProductAttributeGeneric = productAttributeGenericRepository.findById(id)
