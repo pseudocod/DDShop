@@ -2,7 +2,8 @@ package dd.projects.demo.domain.dto.Product;
 
 import dd.projects.demo.domain.dto.CartEntry.CartEntrySummaryDto;
 import dd.projects.demo.domain.dto.Category.CategoryWithoutProductsResponseDto;
-import dd.projects.demo.domain.dto.ProductAttributeConcrete.ProductAttributeConcreteResponseDto;
+import dd.projects.demo.domain.dto.ProductAttribute.ProductAttributeDto;
+import dd.projects.demo.domain.dto.ProductAttribute.ProductAttributeResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +25,5 @@ public class ProductResponseDto {
     private Integer availableQuantity;
     private LocalDate addedDate;
     private CategoryWithoutProductsResponseDto category;
-    private List<ProductAttributeConcreteResponseDto> productAttributes;
-    private List<CartEntrySummaryDto> cartEntries;
+    private List<ProductAttributeResponseDto> attributes;
 }

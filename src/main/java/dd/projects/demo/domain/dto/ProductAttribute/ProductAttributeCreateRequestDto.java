@@ -1,4 +1,4 @@
-package dd.projects.demo.domain.dto.ProductAttributeConcrete;
+package dd.projects.demo.domain.dto.ProductAttribute;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ProductAttributeConcreteUpdateRequestDto {
-    private Long productId;
+public class ProductAttributeCreateRequestDto {
     private Long attributeId;
+    private Long valueId;
+
 }

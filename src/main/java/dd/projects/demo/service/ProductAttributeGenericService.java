@@ -43,7 +43,6 @@ public class ProductAttributeGenericService {
         ProductAttributeGeneric existingProductAttributeGeneric = productAttributeGenericRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException());
 
-        existingProductAttributeGeneric.setId(id);
         existingProductAttributeGeneric.setName(productAttributeGenericEditDto.getName());
 
         ProductAttributeGeneric updatedProductAttributeGeneric = productAttributeGenericRepository.save(existingProductAttributeGeneric);

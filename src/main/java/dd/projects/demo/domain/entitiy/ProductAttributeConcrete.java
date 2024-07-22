@@ -22,5 +22,5 @@ public class ProductAttributeConcrete {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attribute_id", nullable = false)
-    private ProductAttributeGeneric attribute;
+    private AttributeValueConcrete attributeValueConcrete;
 }

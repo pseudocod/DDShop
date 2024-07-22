@@ -21,7 +21,4 @@ public class AttributeValueGeneric {
 
     @Column(name = "value", length = 255, nullable = false)
     private String value;
-
-    @OneToMany(mappedBy = "value", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AttributeValueConcrete> attributeValues;
 }

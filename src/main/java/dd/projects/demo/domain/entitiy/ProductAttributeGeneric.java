@@ -20,6 +20,4 @@ public class ProductAttributeGeneric {
     private Long id;
     @Column(name = "name", length = 255, nullable = false)
     private String name;
-    @OneToMany(mappedBy = "attribute", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductAttributeConcrete> productAttributes;
 }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -33,8 +34,6 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<ProductAttributeConcrete> productAttributes;
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<CartEntry> cartEntries;
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductAttributeConcrete> productAttributes = new ArrayList<>();
 }

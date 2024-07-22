@@ -42,7 +42,6 @@ public class AttributeValueGenericService {
         AttributeValueGeneric existingAttributeValueGeneric = attributeValueGenericRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        existingAttributeValueGeneric.setId(id);
         existingAttributeValueGeneric.setValue(attributeValueGenericEditDto.getValue());
 
         AttributeValueGeneric updatedAttributeValueGeneric = attributeValueGenericRepository.save(existingAttributeValueGeneric);
