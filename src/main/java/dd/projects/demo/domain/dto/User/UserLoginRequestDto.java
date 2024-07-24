@@ -1,6 +1,5 @@
 package dd.projects.demo.domain.dto.User;
 
-import dd.projects.demo.domain.dto.Address.AddressSummaryDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserSummaryDto {
-    private Long id;
-    private String firstName;
-    private String lastName;
+public class UserLoginRequestDto {
     private String email;
+    private String password;
 }

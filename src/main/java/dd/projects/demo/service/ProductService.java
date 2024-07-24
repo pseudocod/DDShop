@@ -130,7 +130,12 @@ public class ProductService {
         List<ProductAttributeConcrete> existingAttributes = updateBasicDetailsProduct.getProductAttributes();
         List<ProductAttributeCreateRequestDto> newAttributes = productEditRequestDto.getAttributes();
 
-        for (ProductAttributeCreateRequestDto newAttribute : newAttributes) {
+        if (newAttributes == null) {
+            newAttributes = new ArrayList<>();
+        }
+        final List<ProductAttributeCreateRequestDto> finalNewAttributes = newAttributes;
+
+        for (ProductAttributeCreateRequestDto newAttribute : finalNewAttributes) {
             boolean exists = existingAttributes.stream().anyMatch(existingAttr ->
                     existingAttr.getAttributeValueConcrete().getAttribute().getId().equals(newAttribute.getAttributeId()) &&
                             existingAttr.getAttributeValueConcrete().getValue().getId().equals(newAttribute.getValueId()));
@@ -144,7 +149,7 @@ public class ProductService {
             }
         }
         List<ProductAttributeConcrete> attributesToRemove = existingAttributes.stream()
-                .filter(existingAttr -> newAttributes.stream().noneMatch(newAttr ->
+                .filter(existingAttr -> finalNewAttributes.stream().noneMatch(newAttr ->
                         newAttr.getAttributeId().equals(existingAttr.getAttributeValueConcrete().getAttribute().getId()) &&
                                 newAttr.getValueId().equals(existingAttr.getAttributeValueConcrete().getValue().getId())))
                 .collect(Collectors.toList());

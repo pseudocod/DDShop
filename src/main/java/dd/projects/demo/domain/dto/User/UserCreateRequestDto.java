@@ -16,7 +16,4 @@ public class UserCreateRequestDto {
     private String email;
     private String phoneNumber;
     private String password;
-    private Long defaultDeliveryAddressId;
-    private Long defaultBillingAddressId;
-
 }

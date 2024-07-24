@@ -29,10 +29,10 @@ public class User {
     @Column(name = "password", length = 255, nullable = false)
     private String password;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "defaultdeliveryaddress_id", nullable = false)
+    @JoinColumn(name = "defaultdeliveryaddress_id", nullable = true)
     private Address defaultDeliveryAddress;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "defaultbillingaddress_id", nullable = false)
+    @JoinColumn(name = "defaultbillingaddress_id", nullable = true)
     private Address defaultBillingAddress;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
