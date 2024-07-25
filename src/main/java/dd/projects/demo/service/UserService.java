@@ -6,6 +6,7 @@ import dd.projects.demo.domain.dto.User.UserResponseDto;
 import dd.projects.demo.domain.entitiy.User;
 import dd.projects.demo.mappers.UserMapper;
 import dd.projects.demo.repository.UserRepository;
+import dd.projects.demo.utility.PasswordUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -26,7 +27,7 @@ public class UserService {
         }
 
         User user = UserMapper.INSTANCE.toEntity(userCreateRequestDto);
-        user.setPassword(userCreateRequestDto.getPassword()); // Store password in plain text (not recommended for production)
+        user.setPassword(PasswordUtils.hashPassword(userCreateRequestDto.getPassword())); // Hashing password
 
         User savedUser = userRepository.save(user);
 
@@ -41,8 +42,9 @@ public class UserService {
         }
 
         User user = userOptional.get();
+        String hashedInputPassword = PasswordUtils.hashPassword(userLoginRequestDto.getPassword());
 
-        if (!userLoginRequestDto.getPassword().equals(user.getPassword())) { // Plain text password check
+        if (!hashedInputPassword.equals(user.getPassword())) { // Comparing hashed passwords
             throw new IllegalArgumentException("Invalid password");
         }
 
