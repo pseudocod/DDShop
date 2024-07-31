@@ -1,9 +1,6 @@
 package dd.projects.demo.controller;
 
-import dd.projects.demo.domain.dto.User.UserCreateRequestDto;
-import dd.projects.demo.domain.dto.User.UserLoginRequestDto;
-import dd.projects.demo.domain.dto.User.UserResponseDto;
-import dd.projects.demo.domain.dto.User.UserSummaryDto;
+import dd.projects.demo.domain.dto.User.*;
 import dd.projects.demo.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -17,6 +14,7 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> registerUserAccount(@RequestBody UserCreateRequestDto userCreateRequestDto) {
         try {
@@ -30,6 +28,24 @@ public class UserController {
     public ResponseEntity<UserResponseDto> login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
         try {
             UserResponseDto userResponseDto = userService.login(userLoginRequestDto);
+            return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @RequestBody UserEditRequestDto userEditRequestDto) {
+        try {
+            UserResponseDto userResponseDto = userService.updateUser(id, userEditRequestDto);
+            return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
+        try {
+            UserResponseDto userResponseDto = userService.getUserById(id);
             return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -18,8 +18,6 @@ import java.time.LocalDate;
 @Builder
 public class OrderSummaryDto {
     private Long id;
-    private UserSummaryDto user;
-    private CartSummaryDto cart;
     private String paymentType;
     private BigDecimal totalPrice;
     private LocalDate orderDate;

@@ -24,7 +24,7 @@ public class User {
     private String lastName;
     @Column(name = "email", length = 50, nullable = false)
     private String email;
-    @Column(name = "phonenumber", length = 20, nullable = false)
+    @Column(name = "phonenumber", length = 20, nullable = true)
     private String phoneNumber;
     @Column(name = "password", length = 255, nullable = false)
     private String password;
@@ -34,7 +34,7 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "defaultbillingaddress_id", nullable = true)
     private Address defaultBillingAddress;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Order> orders;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cart> userCarts;

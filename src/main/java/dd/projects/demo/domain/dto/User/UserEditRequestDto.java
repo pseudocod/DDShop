@@ -1,5 +1,6 @@
 package dd.projects.demo.domain.dto.User;
 
+import dd.projects.demo.domain.dto.Address.AddressEditRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +13,8 @@ import lombok.NoArgsConstructor;
 public class UserEditRequestDto {
     private String firstName;
     private String lastName;
-    private String email;
     private String phoneNumber;
     private String password;
-    private Long defaultDeliveryAddressId;
-    private Long defaultBillingAddressId;
+    private AddressEditRequestDto defaultDeliveryAddress;
+    private AddressEditRequestDto defaultBillingAddress;
 }

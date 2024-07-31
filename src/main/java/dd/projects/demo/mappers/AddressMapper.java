@@ -8,9 +8,10 @@ import dd.projects.demo.domain.entitiy.Address;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {OrderMapper.class, UserMapper.class} )
+@Mapper(componentModel = "spring")
 public interface AddressMapper {
     AddressMapper INSTANCE = Mappers.getMapper(AddressMapper.class);
+
     Address toEntity(AddressCreateRequestDto addressCreateRequestDto);
     Address toEntity(AddressEditRequestDto addressEditRequestDto);
     AddressResponseDto toAddressResponseDto(Address address);

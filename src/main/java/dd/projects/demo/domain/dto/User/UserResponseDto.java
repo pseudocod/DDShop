@@ -18,4 +18,7 @@ public class UserResponseDto {
     private String firstName;
     private String lastName;
     private String email;
+    private String phoneNumber;
+    private AddressSummaryDto defaultDeliveryAddress;
+    private AddressSummaryDto defaultBillingAddress;
 }

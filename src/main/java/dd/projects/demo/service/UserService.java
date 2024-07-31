@@ -1,12 +1,17 @@
 package dd.projects.demo.service;
 
 import dd.projects.demo.domain.dto.User.UserCreateRequestDto;
+import dd.projects.demo.domain.dto.User.UserEditRequestDto;
 import dd.projects.demo.domain.dto.User.UserLoginRequestDto;
 import dd.projects.demo.domain.dto.User.UserResponseDto;
+import dd.projects.demo.domain.entitiy.Address;
 import dd.projects.demo.domain.entitiy.User;
+import dd.projects.demo.mappers.AddressMapper;
 import dd.projects.demo.mappers.UserMapper;
+import dd.projects.demo.repository.AddressRepository;
 import dd.projects.demo.repository.UserRepository;
 import dd.projects.demo.utility.PasswordUtils;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,11 +19,15 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
+    private final AddressMapper addressMapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, AddressRepository addressRepository, AddressMapper addressMapper) {
         this.userRepository = userRepository;
+        this.addressRepository = addressRepository;
+        this.addressMapper = addressMapper;
     }
-
+    @Transactional
     public UserResponseDto registerNewAccount(UserCreateRequestDto userCreateRequestDto) {
         Optional<User> existingUser = userRepository.findByEmail(userCreateRequestDto.getEmail());
 
@@ -48,6 +57,62 @@ public class UserService {
             throw new IllegalArgumentException("Invalid password");
         }
 
+        return UserMapper.INSTANCE.toUserResponseDto(user);
+    }
+
+    @Transactional
+    public UserResponseDto updateUser(Long id, UserEditRequestDto userEditRequestDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        user.setFirstName(userEditRequestDto.getFirstName());
+        user.setLastName(userEditRequestDto.getLastName());
+        user.setPhoneNumber(userEditRequestDto.getPhoneNumber());
+
+        if (userEditRequestDto.getDefaultDeliveryAddress() != null) {
+            Address deliveryAddress = addressMapper.toEntity(userEditRequestDto.getDefaultDeliveryAddress());
+
+            Optional<Address> existingDeliveryAddress = addressRepository.findByDetails(
+                    deliveryAddress.getStreetLine(),
+                    deliveryAddress.getCity(),
+                    deliveryAddress.getPostalCode(),
+                    deliveryAddress.getCounty(),
+                    deliveryAddress.getCountry()
+            );
+
+            if (existingDeliveryAddress.isPresent()) {
+                user.setDefaultDeliveryAddress(existingDeliveryAddress.get());
+            } else {
+                Address savedDeliveryAddress = addressRepository.save(deliveryAddress);
+                user.setDefaultDeliveryAddress(savedDeliveryAddress);
+            }
+        }
+
+        if (userEditRequestDto.getDefaultBillingAddress() != null) {
+            Address billingAddress = addressMapper.toEntity(userEditRequestDto.getDefaultBillingAddress());
+
+            Optional<Address> existingBillingAddress = addressRepository.findByDetails(
+                    billingAddress.getStreetLine(),
+                    billingAddress.getCity(),
+                    billingAddress.getPostalCode(),
+                    billingAddress.getCounty(),
+                    billingAddress.getCountry()
+            );
+
+            if (existingBillingAddress.isPresent()) {
+                user.setDefaultBillingAddress(existingBillingAddress.get());
+            } else {
+                Address savedBillingAddress = addressRepository.save(billingAddress);
+                user.setDefaultBillingAddress(savedBillingAddress);
+            }
+        }
+
+        User updatedUser = userRepository.save(user);
+
+        return UserMapper.INSTANCE.toUserResponseDto(updatedUser);
+    }
+
+    public UserResponseDto getUserById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return UserMapper.INSTANCE.toUserResponseDto(user);
     }
 }

@@ -17,8 +17,8 @@ public interface UserMapper {
     @Mapping(target = "password", ignore = true)
     User toEntity(UserCreateRequestDto dto);
     User toEntity(UserSummaryDto dto);
-    @Mapping(source = "defaultDeliveryAddressId", target = "defaultDeliveryAddress.id")
-    @Mapping(source = "defaultBillingAddressId", target = "defaultBillingAddress.id")
+
     User toEntity(UserEditRequestDto dto);
+
     UserResponseDto toUserResponseDto(User user);
 }
