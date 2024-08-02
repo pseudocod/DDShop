@@ -46,6 +46,12 @@ public class ProductService {
                 .map(ProductMapper.INSTANCE::toResponseDto)
                 .collect(Collectors.toList());
     }
+    public List<ProductResponseDto> getFirst3Products() {
+        List<Product> products = productRepository.findFirst3Products();
+        return products.stream()
+                .map(ProductMapper.INSTANCE::toResponseDto)
+                .collect(Collectors.toList());
+    }
     //CREATE PRODUCT
     @Transactional
     public ProductResponseDto createProduct(ProductCreateRequestDto request) {

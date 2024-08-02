@@ -36,6 +36,12 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
+    @GetMapping("/home")
+    public ResponseEntity<List<ProductResponseDto>> getFirst3Products() {
+        List<ProductResponseDto> products = productService.getFirst3Products();
+        return ResponseEntity.ok(products);
+    }
+
     @PostMapping("/create")
     public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductCreateRequestDto productCreateRequestDto) {
         try {
