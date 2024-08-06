@@ -42,6 +42,17 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<ProductResponseDto>> getProductByCategoryId(@PathVariable Long categoryId) {
+        List<ProductResponseDto> products = productService.getProductByCategoryId(categoryId);
+        return ResponseEntity.ok(products);
+    }
+    @GetMapping("/category/name/{categoryName}")
+    public ResponseEntity<List<ProductResponseDto>> getProductByCategoryName(@PathVariable String categoryName) {
+        List<ProductResponseDto> products = productService.getProductByCategoryName(categoryName);
+        return ResponseEntity.ok(products);
+    }
+    
     @PostMapping("/create")
     public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductCreateRequestDto productCreateRequestDto) {
         try {

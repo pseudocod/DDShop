@@ -52,6 +52,20 @@ public class ProductService {
                 .map(ProductMapper.INSTANCE::toResponseDto)
                 .collect(Collectors.toList());
     }
+
+    public List<ProductResponseDto> getProductByCategoryName(String categoryName) {
+        List<Product> products = productRepository.findByCategoryName(categoryName);
+        return products.stream()
+                .map(ProductMapper.INSTANCE::toResponseDto)
+                .collect(Collectors.toList());
+    }
+    public List<ProductResponseDto> getProductByCategoryId(Long categoryId) {
+        List<Product> products = productRepository.findProductByCategoryId(categoryId);
+        return products.stream()
+                .map(ProductMapper.INSTANCE::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
     //CREATE PRODUCT
     @Transactional
     public ProductResponseDto createProduct(ProductCreateRequestDto request) {
