@@ -42,6 +42,7 @@ public class CartServiceTests {
         MockitoAnnotations.openMocks(this);
     }
 
+
     @Test
     void addCartEntry_addsNewEntryWhenNotExisting() {
         Cart cart = new Cart();
@@ -49,7 +50,7 @@ public class CartServiceTests {
         Product product = new Product();
         product.setId(1L);
         product.setAvailableQuantity(10);
-        product.setPrice(new BigDecimal("10.00")); // Set price here
+        product.setPrice(new BigDecimal("10.00"));
         CartEntryCreateRequestDto requestDto = new CartEntryCreateRequestDto();
         requestDto.setCartId(1L);
         requestDto.setProductId(1L);
@@ -57,7 +58,7 @@ public class CartServiceTests {
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(cartEntryRepository.findCartEntryByProductAndCart(1L, 1L)).thenReturn(null);
+        when(cartEntryRepository.findCartEntryByProductAndCart(product, cart)).thenReturn(null);
 
         CartResponseDto responseDto = cartService.addCartEntry(requestDto);
 
@@ -74,11 +75,11 @@ public class CartServiceTests {
         Product product = new Product();
         product.setId(1L);
         product.setAvailableQuantity(10);
-        product.setPrice(new BigDecimal("10.00")); // Set price here
+        product.setPrice(new BigDecimal("10.00"));
         CartEntry existingEntry = new CartEntry();
         existingEntry.setProduct(product);
         existingEntry.setQuantity(3);
-        existingEntry.setPricePerPiece(new BigDecimal("10.00")); // Set price here
+        existingEntry.setPricePerPiece(new BigDecimal("10.00"));
         cart.getCartEntries().add(existingEntry);
         CartEntryCreateRequestDto requestDto = new CartEntryCreateRequestDto();
         requestDto.setCartId(1L);
@@ -87,7 +88,7 @@ public class CartServiceTests {
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(cartEntryRepository.findCartEntryByProductAndCart(1L, 1L)).thenReturn(existingEntry);
+        when(cartEntryRepository.findCartEntryByProductAndCart(product, cart)).thenReturn(existingEntry);
 
         CartResponseDto responseDto = cartService.addCartEntry(requestDto);
 
@@ -96,7 +97,6 @@ public class CartServiceTests {
         verify(cartEntryRepository, times(1)).save(existingEntry);
         verify(cartRepository, times(1)).save(cart);
     }
-
     @Test
     void addCartEntry_throwsExceptionWhenNotEnoughStock() {
         Cart cart = new Cart();
@@ -175,7 +175,7 @@ public class CartServiceTests {
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(cartEntryRepository.findCartEntryByProductAndCart(1L, 1L)).thenReturn(null);
+        when(cartEntryRepository.findCartEntryByProductAndCart(product, cart)).thenReturn(null);
 
         CartResponseDto responseDto = cartService.addCartEntry(requestDto);
 
@@ -209,7 +209,7 @@ public class CartServiceTests {
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(cartEntryRepository.findCartEntryByProductAndCart(1L, 1L)).thenReturn(existingEntry);
+        when(cartEntryRepository.findCartEntryByProductAndCart(product, cart)).thenReturn(existingEntry);
 
         CartResponseDto responseDto = cartService.addCartEntry(requestDto);
 
@@ -237,7 +237,7 @@ public class CartServiceTests {
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(cartEntryRepository.findCartEntryByProductAndCart(1L, 1L)).thenReturn(null);
+        when(cartEntryRepository.findCartEntryByProductAndCart(product, cart)).thenReturn(null);
 
         CartResponseDto responseDto = cartService.addCartEntry(requestDto);
 
@@ -268,7 +268,7 @@ public class CartServiceTests {
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        when(cartEntryRepository.findCartEntryByProductAndCart(1L, 1L)).thenReturn(existingEntry);
+        when(cartEntryRepository.findCartEntryByProductAndCart(product, cart)).thenReturn(existingEntry);
 
         CartResponseDto responseDto = cartService.addCartEntry(requestDto);
 

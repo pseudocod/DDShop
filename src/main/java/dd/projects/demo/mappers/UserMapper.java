@@ -12,6 +12,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(uses = {AddressMapper.class, OrderMapper.class, CartMapper.class})
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
     UserSummaryDto toUserSummaryDto(User user);
 
     @Mapping(target = "password", ignore = true)

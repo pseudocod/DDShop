@@ -4,7 +4,7 @@ import dd.projects.demo.domain.entitiy.PaymentType;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface PaymentTypeMapper {
     PaymentTypeMapper INSTANCE = Mappers.getMapper(PaymentTypeMapper.class);
 

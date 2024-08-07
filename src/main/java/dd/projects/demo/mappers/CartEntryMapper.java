@@ -12,7 +12,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper(uses = {ProductMapper.class, CartMapper.class})
 public interface CartEntryMapper {
     CartEntryMapper INSTANCE = Mappers.getMapper(CartEntryMapper.class);
-    @Mapping(source = "cartId", target = "cart.id")
+
     @Mapping(source = "productId", target = "product.id")
     CartEntry toEntity(CartEntryCreateRequestDto cartEntryCreateRequestDto);
     @Mapping(source = "cartId", target = "cart.id")

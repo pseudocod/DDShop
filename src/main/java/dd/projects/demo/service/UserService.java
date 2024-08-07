@@ -14,6 +14,7 @@ import dd.projects.demo.utility.PasswordUtils;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -21,11 +22,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final AddressRepository addressRepository;
     private final AddressMapper addressMapper;
+    private final CartService cartService;
 
-    public UserService(UserRepository userRepository, AddressRepository addressRepository, AddressMapper addressMapper) {
+    public UserService(UserRepository userRepository, AddressRepository addressRepository, AddressMapper addressMapper, CartService cartService) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.addressMapper = addressMapper;
+        this.cartService = cartService;
     }
     @Transactional
     public UserResponseDto registerNewAccount(UserCreateRequestDto userCreateRequestDto) {
@@ -39,6 +42,7 @@ public class UserService {
         user.setPassword(PasswordUtils.hashPassword(userCreateRequestDto.getPassword())); // Hashing password
 
         User savedUser = userRepository.save(user);
+        cartService.createCart(user.getId());
 
         return UserMapper.INSTANCE.toUserResponseDto(savedUser);
     }

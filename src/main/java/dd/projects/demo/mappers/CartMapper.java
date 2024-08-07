@@ -9,14 +9,15 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {OrderMapper.class, CartEntryMapper.class, UserMapper.class})
+@Mapper(componentModel = "spring", uses = {CartEntryMapper.class})
 public interface CartMapper {
     CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
-    @Mapping(source = "userId", target = "user.id")
-    Cart toEntity(CartCreateRequestDto cartCreateRequestDto);
-    @Mapping(source = "userId", target = "user.id")
-    Cart toEntity(CartEditRequestDto cartEditRequestDto);
-    CartResponseDto toCartResponseDto(Cart cart);
-    CartSummaryDto toCartSummaryDto(Cart cart);
 
+    Cart toEntity(CartCreateRequestDto cartCreateRequestDto);
+
+    Cart toEntity(CartEditRequestDto cartEditRequestDto);
+
+    CartResponseDto toCartResponseDto(Cart cart);
+
+    CartSummaryDto toCartSummaryDto(Cart cart);
 }

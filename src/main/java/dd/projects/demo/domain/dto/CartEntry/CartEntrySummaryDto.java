@@ -15,7 +15,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class CartEntrySummaryDto {
     private Long id;
-    private CartSummaryDto cart;
     private ProductSummaryDto product;
     private Integer quantity;
     private BigDecimal pricePerPiece;

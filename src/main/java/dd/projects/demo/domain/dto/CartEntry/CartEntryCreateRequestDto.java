@@ -12,9 +12,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CartEntryCreateRequestDto {
-    private Long cartId;
     private Long productId;
     private Integer quantity;
-    private BigDecimal pricePerPiece;
-    private BigDecimal totalPriceEntry;
 }

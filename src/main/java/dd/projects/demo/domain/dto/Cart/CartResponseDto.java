@@ -17,8 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 public class CartResponseDto {
     private Long id;
-    private UserSummaryDto user;
     private BigDecimal totalPrice;
-    private OrderSummaryDto order;
     private List<CartEntrySummaryDto> cartEntries;
 }

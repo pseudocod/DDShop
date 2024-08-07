@@ -14,6 +14,7 @@ import dd.projects.demo.repository.CartRepository;
 import dd.projects.demo.repository.ProductRepository;
 import dd.projects.demo.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ public class CartService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
     private final CartEntryRepository cartEntryRepository;
+    Logger log = org.apache.logging.log4j.LogManager.getLogger(CartService.class);
 
     public CartService(CartRepository cartRepository, UserRepository userRepository, ProductRepository productRepository, CartEntryRepository cartEntryRepository) {
         this.cartRepository = cartRepository;
@@ -33,16 +35,21 @@ public class CartService {
         this.cartEntryRepository = cartEntryRepository;
     }
 
-    public CartResponseDto createCart(Long userId, CartCreateRequestDto cartCreateRequestDto) {
+    public CartResponseDto createCart(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        cartCreateRequestDto.setUserId(userId);
-        cartCreateRequestDto.setTotalPrice(BigDecimal.ZERO);
-        Cart cart = CartMapper.INSTANCE.toEntity(cartCreateRequestDto);
+        Cart cart = new Cart();
+        cart.setUser(user);
+        cart.setTotalPrice(BigDecimal.ZERO);
+
+        if(user.getUserCarts() == null) {
+            user.setUserCarts(new ArrayList<>());
+        }
 
         Cart savedCart = cartRepository.save(cart);
-
+        user.getUserCarts().add(savedCart);
+        userRepository.save(user);
         return CartMapper.INSTANCE.toCartResponseDto(savedCart);
     }
 
@@ -54,27 +61,34 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponseDto addCartEntry(CartEntryCreateRequestDto cartEntryCreateRequestDto) {
-        Cart cart = cartRepository.findById(cartEntryCreateRequestDto.getCartId())
+    public CartResponseDto addCartEntry(Long cartId, CartEntryCreateRequestDto cartEntryCreateRequestDto) {
+        log.info("Adding cart entry: cartId={}, productId={}, quantity={}", cartId, cartEntryCreateRequestDto.getProductId(), cartEntryCreateRequestDto.getQuantity());
+        Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
-
+        log.info("Cart found: {}", cart.getId());
         Product product = productRepository.findById(cartEntryCreateRequestDto.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+        log.info("Product found: {}", product.getName());
 
-        CartEntry existingCartEntry = cartEntryRepository.findCartEntryByProductAndCart(product.getId(), cart.getId());
+        CartEntry existingCartEntry = cartEntryRepository.findCartEntryByProductAndCart(product, cart);
+        log.info("Existing cart entry: {}", existingCartEntry != null ? existingCartEntry.getId() : "None");
 
         if (product.getAvailableQuantity() < cartEntryCreateRequestDto.getQuantity()) {
+            log.error("Not enough products in stock: requested={}, available={}", cartEntryCreateRequestDto.getQuantity(), product.getAvailableQuantity());
             throw new IllegalArgumentException("Not enough products in stock");
         }
 
         if (existingCartEntry != null) {
+            log.info("Updating existing cart entry for productId={}, cartId={}", cartEntryCreateRequestDto.getProductId(), cartId);
             updateExistingCartEntry(cartEntryCreateRequestDto, existingCartEntry, product);
         } else {
+            log.info("Adding new cart entry for productId={}, cartId={}", cartEntryCreateRequestDto.getProductId(), cartId);
             addNewCartEntry(cartEntryCreateRequestDto, cart, product);
         }
 
         updateCartTotalPrice(cart);
         Cart updatedCart = cartRepository.save(cart);
+        log.info("Cart updated successfully: cartId={}", cartId);
 
         return CartMapper.INSTANCE.toCartResponseDto(updatedCart);
     }
@@ -83,16 +97,21 @@ public class CartService {
         CartEntry cartEntry = CartEntryMapper.INSTANCE.toEntity(cartEntryCreateRequestDto);
         cartEntry.setPricePerPiece(product.getPrice());
         cartEntry.setTotalPriceEntry(product.getPrice().multiply(BigDecimal.valueOf(cartEntryCreateRequestDto.getQuantity())));
+        cartEntry.setCart(cart);
+        cartEntry.setProduct(product);
         if (cart.getCartEntries() == null) {
             cart.setCartEntries(new ArrayList<>());
         }
+        log.info("New cart entry: {}", cartEntry);
         cart.getCartEntries().add(cartEntry);
         cartEntryRepository.save(cartEntry);
+        log.info("New cart entry added: {}", cartEntry.getId());
     }
 
     private void updateExistingCartEntry(CartEntryCreateRequestDto cartEntryCreateRequestDto, CartEntry existingCartEntry, Product product) {
         int newQuantity = existingCartEntry.getQuantity() + cartEntryCreateRequestDto.getQuantity();
         if (product.getAvailableQuantity() < newQuantity) {
+            log.error("Not enough products in stock: requested={}, available={}", newQuantity, product.getAvailableQuantity());
             throw new IllegalArgumentException("Not enough products in stock");
         }
         existingCartEntry.setQuantity(newQuantity);
@@ -101,6 +120,7 @@ public class CartService {
         }
         existingCartEntry.setTotalPriceEntry(existingCartEntry.getPricePerPiece().multiply(BigDecimal.valueOf(newQuantity)));
         cartEntryRepository.save(existingCartEntry);
+        log.info("Existing cart entry updated: {}", existingCartEntry.getId());
     }
 
     private void updateCartTotalPrice(Cart cart) {
@@ -114,5 +134,6 @@ public class CartService {
                 .filter(totalPriceEntry -> totalPriceEntry != null)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         cart.setTotalPrice(totalPrice);
+        log.info("Cart total price updated: {}", totalPrice);
     }
 }
