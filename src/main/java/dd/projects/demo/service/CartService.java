@@ -3,6 +3,7 @@ package dd.projects.demo.service;
 import dd.projects.demo.domain.dto.Cart.CartCreateRequestDto;
 import dd.projects.demo.domain.dto.Cart.CartResponseDto;
 import dd.projects.demo.domain.dto.CartEntry.CartEntryCreateRequestDto;
+import dd.projects.demo.domain.dto.CartEntry.CartEntryEditDto;
 import dd.projects.demo.domain.entitiy.Cart;
 import dd.projects.demo.domain.entitiy.CartEntry;
 import dd.projects.demo.domain.entitiy.Product;
@@ -135,5 +136,67 @@ public class CartService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         cart.setTotalPrice(totalPrice);
         log.info("Cart total price updated: {}", totalPrice);
+    }
+    @Transactional
+    public CartResponseDto deleteCartEntry(Long cartId, Long cartEntryId) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+        CartEntry cartEntry = cartEntryRepository.findById(cartEntryId)
+                .orElseThrow(() -> new IllegalArgumentException("Cart entry not found"));
+
+        if (!cart.getCartEntries().contains(cartEntry)) {
+            throw new IllegalArgumentException("Cart entry not found in cart");
+        }
+
+        cart.getCartEntries().remove(cartEntry);
+        cartEntryRepository.delete(cartEntry);
+
+        updateCartTotalPrice(cart);
+        Cart updatedCart = cartRepository.save(cart);
+
+        return CartMapper.INSTANCE.toCartResponseDto(updatedCart);
+    }
+
+    @Transactional
+    public CartResponseDto deleteCart(Long cartId) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+
+        cartRepository.delete(cart);
+
+        return CartMapper.INSTANCE.toCartResponseDto(cart);
+    }
+
+    @Transactional
+    public CartResponseDto updateCartEntryQuantity(Long cartId, CartEntryEditDto cartEntryEditDto) {
+        Long cartEntryId = cartEntryEditDto.getCartEntryId();
+        Integer quantity = cartEntryEditDto.getQuantity();
+
+        if(quantity <= 0) {
+            return deleteCartEntry(cartId, cartEntryId);
+        }
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+        CartEntry cartEntry = cartEntryRepository.findById(cartEntryId)
+                .orElseThrow(() -> new IllegalArgumentException("Cart entry not found"));
+
+        if (cart.getCartEntries() == null || !cart.getCartEntries().contains(cartEntry)) {
+            throw new IllegalArgumentException("Cart entry not found in cart");
+        }
+
+        Product product = cartEntry.getProduct();
+
+        if (product.getAvailableQuantity() < quantity) {
+            throw new IllegalArgumentException("Not enough products in stock");
+        }
+
+        cartEntry.setQuantity(quantity);
+        cartEntry.setTotalPriceEntry(cartEntry.getPricePerPiece().multiply(BigDecimal.valueOf(quantity)));
+        cartEntryRepository.save(cartEntry);
+
+        updateCartTotalPrice(cart);
+        Cart updatedCart = cartRepository.save(cart);
+
+        return CartMapper.INSTANCE.toCartResponseDto(updatedCart);
     }
 }

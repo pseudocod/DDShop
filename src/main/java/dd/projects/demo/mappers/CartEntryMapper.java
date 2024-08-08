@@ -15,8 +15,7 @@ public interface CartEntryMapper {
 
     @Mapping(source = "productId", target = "product.id")
     CartEntry toEntity(CartEntryCreateRequestDto cartEntryCreateRequestDto);
-    @Mapping(source = "cartId", target = "cart.id")
-    @Mapping(source = "productId", target = "product.id")
+    @Mapping(source = "cartEntryId", target = "id")
     CartEntry toEntity(CartEntryEditDto cartEntryEditDtoRequestDto);
     CartEntryResponseDto toCartEntryResponseDto(Cart cart);
     CartEntrySummaryDto toCartEntrySummaryDto(Cart cart);
