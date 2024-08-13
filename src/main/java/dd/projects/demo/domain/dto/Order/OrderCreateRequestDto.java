@@ -1,5 +1,6 @@
 package dd.projects.demo.domain.dto.Order;
 
+import dd.projects.demo.domain.dto.Address.AddressCreateRequestDto;
 import dd.projects.demo.domain.entitiy.PaymentType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,8 +18,6 @@ public class OrderCreateRequestDto {
     private Long userId;
     private Long cartId;
     private PaymentType paymentType;
-    private BigDecimal totalPrice;
-    private LocalDate orderDate;
-    private Long deliveryAddressId;
-    private Long invoiceAddressId;
+    private AddressCreateRequestDto deliveryAddress;
+    private AddressCreateRequestDto invoiceAddress;
 }

@@ -12,7 +12,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring", uses = {PaymentTypeMapper.class, AddressMapper.class, CartMapper.class})
+@Mapper(uses = {PaymentTypeMapper.class, AddressMapper.class, CartMapper.class})
 public interface OrderMapper {
     OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
@@ -22,14 +22,10 @@ public interface OrderMapper {
 
     @Mapping(source = "cartId", target = "cart.id")
     @Mapping(source = "userId", target = "user.id")
-    @Mapping(source = "deliveryAddressId", target = "deliveryAddress.id")
-    @Mapping(source = "invoiceAddressId", target = "invoiceAddress.id")
     Order toEntity(OrderCreateRequestDto orderCreateRequestDto);
 
     @Mapping(source = "cartId", target = "cart.id")
     @Mapping(source = "userId", target = "user.id")
-    @Mapping(source = "deliveryAddressId", target = "deliveryAddress.id")
-    @Mapping(source = "invoiceAddressId", target = "invoiceAddress.id")
     Order toEntity(OrderEditRequestDto orderEditRequestDto);
 
     OrderResponseDto toOrderResponseDto(Order order);
