@@ -42,6 +42,13 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/origins")
+    public ResponseEntity<List<ProductResponseDto>> getOneProductPerSpecifiedCategory() {
+        List<ProductResponseDto> response = productService.getOneProductPerSpecifiedCategory();
+        return ResponseEntity.ok(response);
+    }
+
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ProductResponseDto>> getProductByCategoryId(@PathVariable Long categoryId) {
         List<ProductResponseDto> products = productService.getProductByCategoryId(categoryId);

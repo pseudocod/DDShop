@@ -1,12 +1,11 @@
 package dd.projects.demo.service;
 
 import dd.projects.demo.domain.dto.Address.AddressCreateRequestDto;
+import dd.projects.demo.domain.dto.Address.AddressResponseDto;
 import dd.projects.demo.domain.dto.Order.OrderCreateRequestDto;
 import dd.projects.demo.domain.dto.Order.OrderResponseDto;
-import dd.projects.demo.domain.entitiy.Address;
-import dd.projects.demo.domain.entitiy.Cart;
-import dd.projects.demo.domain.entitiy.Order;
-import dd.projects.demo.domain.entitiy.User;
+import dd.projects.demo.domain.entitiy.*;
+import dd.projects.demo.mappers.AddressMapper;
 import dd.projects.demo.mappers.OrderMapper;
 import dd.projects.demo.repository.*;
 import jakarta.transaction.Transactional;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,14 +27,16 @@ public class OrderService {
     private final CartRepository cartRepository;
     private final AddressRepository addressRepository;
     private final ProductRepository productRepository;
+    private final EmailService emailService;
     Logger log = org.apache.logging.log4j.LogManager.getLogger(CartService.class);
 
-    public OrderService(OrderRepository orderRepository, UserRepository userRepository, CartRepository cartRepository, AddressRepository addressRepository, ProductRepository productRepository) {
+    public OrderService(OrderRepository orderRepository, UserRepository userRepository, CartRepository cartRepository, AddressRepository addressRepository, ProductRepository productRepository, EmailService emailService) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.cartRepository = cartRepository;
         this.addressRepository = addressRepository;
         this.productRepository = productRepository;
+        this.emailService = emailService;
     }
 
     public OrderResponseDto getOrderById(Long orderId) {
@@ -68,7 +70,9 @@ public class OrderService {
         log.info("Creating order for cart with id: " + orderCreateRequestDto.getCartId());
         Cart cart = cartRepository.findById(orderCreateRequestDto.getCartId())
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+        Cart orderedCart = copyCart(cart);
 
+        Cart savedOrderedCart = cartRepository.save(orderedCart);
 
         Address deliveryAddress = findOrCreateAddress(orderCreateRequestDto.getDeliveryAddress());
         Address invoiceAddress = findOrCreateAddress(orderCreateRequestDto.getInvoiceAddress());
@@ -76,17 +80,29 @@ public class OrderService {
         Order order = OrderMapper.INSTANCE.toEntity(orderCreateRequestDto);
         order.setOrderDate(LocalDate.now());
         order.setUser(user);
-        order.setCart(cart);
+        order.setCart(savedOrderedCart);
         order.setDeliveryAddress(deliveryAddress);
         order.setInvoiceAddress(invoiceAddress);
         order.setTotalPrice(cart.getTotalPrice());
 
+        if(user.getOrders() == null) {
+            user.setOrders(new ArrayList<>());
+        }
+
+        user.getOrders().add(order);
+        userRepository.save(user);
         reduceProductQuantity(cart);
 
         Order savedOrder = orderRepository.save(order);
 
         clearCart(cart);
 
+        try {
+            emailService.sendOrderConfirmationEmail(user, savedOrder);
+            log.info("Order confirmation email sent to user with id: " + user.getId() + user.getEmail());
+        } catch (Exception e) {
+            log.error("Failed to send email: " + e.getMessage());
+        }
         return OrderMapper.INSTANCE.toOrderResponseDto(savedOrder);
     }
 
@@ -124,5 +140,36 @@ public class OrderService {
             productRepository.save(cartEntry.getProduct());
         });
     }
+
+    private Cart copyCart(Cart cart) {
+        Cart orderedCart = new Cart();
+
+        // Copy basic attributes
+        orderedCart.setUser(cart.getUser());
+        orderedCart.setTotalPrice(cart.getTotalPrice());
+
+        // Copy cart entries
+        List<CartEntry> cartEntries = new ArrayList<>();
+        for (CartEntry entry : cart.getCartEntries()) {
+            CartEntry copiedEntry = new CartEntry();
+            copiedEntry.setCart(orderedCart); // Set the reference back to the orderedCart
+
+            // Assuming Product has a proper clone method
+            Product clonedProduct = new Product();
+            clonedProduct.setId(entry.getProduct().getId()); // Copying the ID only
+            clonedProduct.setName(entry.getProduct().getName()); // Copy other necessary fields
+            // Repeat for any other fields that need to be copied
+
+            copiedEntry.setProduct(clonedProduct); // Set the cloned product
+            copiedEntry.setQuantity(entry.getQuantity()); // Copy quantity
+            copiedEntry.setPricePerPiece(entry.getPricePerPiece()); // Copy price per piece
+            copiedEntry.setTotalPriceEntry(entry.getTotalPriceEntry()); // Copy total price entry
+            cartEntries.add(copiedEntry);
+        }
+        orderedCart.setCartEntries(cartEntries);
+
+        return orderedCart;
+    }
+
 }
 

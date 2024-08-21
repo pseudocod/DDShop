@@ -66,6 +66,12 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    public List<ProductResponseDto> getOneProductPerSpecifiedCategory(){
+        return productRepository.findOneProductPerOrigin().stream()
+                .map(ProductMapper.INSTANCE::toResponseDto)
+                .collect(Collectors.toList());
+    }
+
     //CREATE PRODUCT
     @Transactional
     public ProductResponseDto createProduct(ProductCreateRequestDto request) {
