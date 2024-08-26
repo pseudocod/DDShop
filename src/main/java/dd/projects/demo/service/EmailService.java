@@ -2,6 +2,7 @@ package dd.projects.demo.service;
 
 import dd.projects.demo.domain.entitiy.Order;
 import dd.projects.demo.domain.entitiy.User;
+import dd.projects.demo.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -22,6 +23,12 @@ public class EmailService {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    private final UserRepository userRepository;
+
+    public EmailService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public void sendEmail(String to, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -60,6 +67,24 @@ public class EmailService {
         htmlTemplate = htmlTemplate.replace("${orderDate}", order.getOrderDate().toString());
         htmlTemplate = htmlTemplate.replace("${totalPrice}", order.getTotalPrice().toString());
 
+
+        message.setContent(htmlTemplate, "text/html; charset=utf-8");
+
+        mailSender.send(message);
+    }
+
+    public void sendUserChangePasswordConfirmation(Long id) throws MessagingException, IOException {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        MimeMessage message = mailSender.createMimeMessage();
+
+        message.setFrom(new InternetAddress("support@oricând.com"));
+        message.setRecipients(MimeMessage.RecipientType.TO, user.getEmail());
+        message.setSubject("Change Password - " + user.getFirstName() + ' ' + user.getLastName());
+
+        String htmlTemplate = readFile("C:\\Users\\mocan\\OneDrive\\Desktop\\DDShop\\demo\\src\\main\\resources\\templates\\templateForSendingChangePasswordMail.html");
+
+        htmlTemplate = htmlTemplate.replace("${name}", user.getFirstName() + ' ' + user.getLastName());
+        htmlTemplate = htmlTemplate.replace("${resetLink}", "http://localhost:3000/change-password");
 
         message.setContent(htmlTemplate, "text/html; charset=utf-8");
 

@@ -51,4 +51,14 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PutMapping("/update/{id}/password")
+    public ResponseEntity<UserResponseDto> updateUserPassword(@PathVariable Long id, @RequestBody UserChangePasswordDto userEditPasswordRequestDto) {
+        try {
+            UserResponseDto userResponseDto = userService.changeUserPassword(id, userEditPasswordRequestDto);
+            return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

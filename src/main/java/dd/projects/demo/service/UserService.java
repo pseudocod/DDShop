@@ -1,12 +1,10 @@
 package dd.projects.demo.service;
 
-import dd.projects.demo.domain.dto.User.UserCreateRequestDto;
-import dd.projects.demo.domain.dto.User.UserEditRequestDto;
-import dd.projects.demo.domain.dto.User.UserLoginRequestDto;
-import dd.projects.demo.domain.dto.User.UserResponseDto;
+import dd.projects.demo.domain.dto.User.*;
 import dd.projects.demo.domain.entitiy.Address;
 import dd.projects.demo.domain.entitiy.User;
 import dd.projects.demo.mappers.AddressMapper;
+import dd.projects.demo.mappers.OrderMapper;
 import dd.projects.demo.mappers.UserMapper;
 import dd.projects.demo.repository.AddressRepository;
 import dd.projects.demo.repository.UserRepository;
@@ -23,12 +21,14 @@ public class UserService {
     private final AddressRepository addressRepository;
     private final AddressMapper addressMapper;
     private final CartService cartService;
+    private final EmailService emailService;
 
-    public UserService(UserRepository userRepository, AddressRepository addressRepository, AddressMapper addressMapper, CartService cartService) {
+    public UserService(UserRepository userRepository, AddressRepository addressRepository, AddressMapper addressMapper, CartService cartService, EmailService emailService) {
         this.userRepository = userRepository;
         this.addressRepository = addressRepository;
         this.addressMapper = addressMapper;
         this.cartService = cartService;
+        this.emailService = emailService;
     }
     @Transactional
     public UserResponseDto registerNewAccount(UserCreateRequestDto userCreateRequestDto) {
@@ -118,5 +118,26 @@ public class UserService {
     public UserResponseDto getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return UserMapper.INSTANCE.toUserResponseDto(user);
+    }
+
+
+    @Transactional
+    public UserResponseDto changeUserPassword(Long id, UserChangePasswordDto userChangePasswordDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        String hashedNewPassword = PasswordUtils.hashPassword(userChangePasswordDto.getNewPassword());
+        String hashedOldPassword = PasswordUtils.hashPassword(userChangePasswordDto.getOldPassword());
+
+        if(!hashedOldPassword.equals(user.getPassword())) {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
+        if(hashedOldPassword.equals(hashedNewPassword)) {
+            throw new IllegalArgumentException("New password cannot be the same as the old password");
+        }
+
+        user.setPassword(hashedNewPassword);
+
+        User updatedUser = userRepository.save(user);
+        return UserMapper.INSTANCE.toUserResponseDto(updatedUser);
     }
 }
