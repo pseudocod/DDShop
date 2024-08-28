@@ -8,6 +8,7 @@ import dd.projects.demo.domain.entitiy.Cart;
 import dd.projects.demo.domain.entitiy.CartEntry;
 import dd.projects.demo.domain.entitiy.Product;
 import dd.projects.demo.domain.entitiy.User;
+import dd.projects.demo.exceptions.InsufficientStockException;
 import dd.projects.demo.mappers.CartEntryMapper;
 import dd.projects.demo.mappers.CartMapper;
 import dd.projects.demo.repository.CartEntryRepository;
@@ -76,7 +77,9 @@ public class CartService {
 
         if (product.getAvailableQuantity() < cartEntryCreateRequestDto.getQuantity()) {
             log.error("Not enough products in stock: requested={}, available={}", cartEntryCreateRequestDto.getQuantity(), product.getAvailableQuantity());
-            throw new IllegalArgumentException("Not enough products in stock");
+            throw new InsufficientStockException("Not enough products in stock. Requested: "
+                    + cartEntryCreateRequestDto.getQuantity()
+                    + ", Available: " + product.getAvailableQuantity());
         }
 
         if (existingCartEntry != null) {
@@ -113,7 +116,9 @@ public class CartService {
         int newQuantity = existingCartEntry.getQuantity() + cartEntryCreateRequestDto.getQuantity();
         if (product.getAvailableQuantity() < newQuantity) {
             log.error("Not enough products in stock: requested={}, available={}", newQuantity, product.getAvailableQuantity());
-            throw new IllegalArgumentException("Not enough products in stock");
+            throw new InsufficientStockException("Not enough products in stock: requested="
+                    + cartEntryCreateRequestDto.getQuantity()
+                    + ", available=" + product.getAvailableQuantity());
         }
         existingCartEntry.setQuantity(newQuantity);
         if (existingCartEntry.getPricePerPiece() == null) {
@@ -187,7 +192,7 @@ public class CartService {
         Product product = cartEntry.getProduct();
 
         if (product.getAvailableQuantity() < quantity) {
-            throw new IllegalArgumentException("Not enough products in stock");
+            throw new InsufficientStockException("Not enough products in stock. Available: " + product.getAvailableQuantity());
         }
 
         cartEntry.setQuantity(quantity);

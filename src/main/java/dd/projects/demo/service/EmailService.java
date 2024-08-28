@@ -1,5 +1,7 @@
 package dd.projects.demo.service;
 
+import dd.projects.demo.domain.entitiy.Cart;
+import dd.projects.demo.domain.entitiy.CartEntry;
 import dd.projects.demo.domain.entitiy.Order;
 import dd.projects.demo.domain.entitiy.User;
 import dd.projects.demo.repository.UserRepository;
@@ -53,7 +55,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    public void sendOrderConfirmationEmail(User user, Order order) throws MessagingException, IOException {
+    public void sendOrderConfirmationEmail(User user, Order order, Cart savedOrderedCart) throws MessagingException, IOException {
         MimeMessage message = mailSender.createMimeMessage();
 
         message.setFrom(new InternetAddress("support@oricând.com"));
@@ -65,13 +67,24 @@ public class EmailService {
         htmlTemplate = htmlTemplate.replace("${name}", user.getFirstName() + ' ' + user.getLastName());
         htmlTemplate = htmlTemplate.replace("${orderNumber}", order.getId().toString());
         htmlTemplate = htmlTemplate.replace("${orderDate}", order.getOrderDate().toString());
-        htmlTemplate = htmlTemplate.replace("${totalPrice}", order.getTotalPrice().toString());
 
+        StringBuilder cartEntriesHtml = new StringBuilder();
+        for (CartEntry entry : savedOrderedCart.getCartEntries()) {
+            cartEntriesHtml.append("<tr>")
+                    .append("<td>").append(entry.getProduct().getName()).append("</td>")
+                    .append("<td>").append(entry.getQuantity()).append("</td>")
+                    .append("<td>").append(entry.getTotalPriceEntry()).append("</td>")
+                    .append("</tr>");
+        }
+        htmlTemplate = htmlTemplate.replace("${cartEntries}", cartEntriesHtml.toString());
+
+        htmlTemplate = htmlTemplate.replace("${totalPrice}", order.getTotalPrice().toString());
 
         message.setContent(htmlTemplate, "text/html; charset=utf-8");
 
         mailSender.send(message);
     }
+
 
     public void sendUserChangePasswordConfirmation(Long id) throws MessagingException, IOException {
         User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));

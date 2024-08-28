@@ -98,7 +98,7 @@ public class OrderService {
         clearCart(cart);
 
         try {
-            emailService.sendOrderConfirmationEmail(user, savedOrder);
+            emailService.sendOrderConfirmationEmail(user, savedOrder, savedOrderedCart);
             log.info("Order confirmation email sent to user with id: " + user.getId() + user.getEmail());
         } catch (Exception e) {
             log.error("Failed to send email: " + e.getMessage());
@@ -144,26 +144,22 @@ public class OrderService {
     private Cart copyCart(Cart cart) {
         Cart orderedCart = new Cart();
 
-        // Copy basic attributes
         orderedCart.setUser(cart.getUser());
         orderedCart.setTotalPrice(cart.getTotalPrice());
 
-        // Copy cart entries
         List<CartEntry> cartEntries = new ArrayList<>();
         for (CartEntry entry : cart.getCartEntries()) {
             CartEntry copiedEntry = new CartEntry();
-            copiedEntry.setCart(orderedCart); // Set the reference back to the orderedCart
+            copiedEntry.setCart(orderedCart);
 
-            // Assuming Product has a proper clone method
             Product clonedProduct = new Product();
-            clonedProduct.setId(entry.getProduct().getId()); // Copying the ID only
-            clonedProduct.setName(entry.getProduct().getName()); // Copy other necessary fields
-            // Repeat for any other fields that need to be copied
+            clonedProduct.setId(entry.getProduct().getId());
+            clonedProduct.setName(entry.getProduct().getName());
 
-            copiedEntry.setProduct(clonedProduct); // Set the cloned product
-            copiedEntry.setQuantity(entry.getQuantity()); // Copy quantity
-            copiedEntry.setPricePerPiece(entry.getPricePerPiece()); // Copy price per piece
-            copiedEntry.setTotalPriceEntry(entry.getTotalPriceEntry()); // Copy total price entry
+            copiedEntry.setProduct(clonedProduct);
+            copiedEntry.setQuantity(entry.getQuantity());
+            copiedEntry.setPricePerPiece(entry.getPricePerPiece());
+            copiedEntry.setTotalPriceEntry(entry.getTotalPriceEntry());
             cartEntries.add(copiedEntry);
         }
         orderedCart.setCartEntries(cartEntries);
