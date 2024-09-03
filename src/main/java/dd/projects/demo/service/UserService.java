@@ -1,5 +1,6 @@
 package dd.projects.demo.service;
 
+import dd.projects.demo.domain.dto.Address.AddressCreateRequestDto;
 import dd.projects.demo.domain.dto.User.*;
 import dd.projects.demo.domain.entitiy.Address;
 import dd.projects.demo.domain.entitiy.User;
@@ -30,6 +31,7 @@ public class UserService {
         this.cartService = cartService;
         this.emailService = emailService;
     }
+
     @Transactional
     public UserResponseDto registerNewAccount(UserCreateRequestDto userCreateRequestDto) {
         Optional<User> existingUser = userRepository.findByEmail(userCreateRequestDto.getEmail());
@@ -131,11 +133,62 @@ public class UserService {
         if(!hashedOldPassword.equals(user.getPassword())) {
             throw new IllegalArgumentException("Old password is incorrect");
         }
+
         if(hashedOldPassword.equals(hashedNewPassword)) {
             throw new IllegalArgumentException("New password cannot be the same as the old password");
         }
 
         user.setPassword(hashedNewPassword);
+
+        User updatedUser = userRepository.save(user);
+        return UserMapper.INSTANCE.toUserResponseDto(updatedUser);
+    }
+
+    @Transactional
+    public UserResponseDto updateUserDeliveryAddress(Long id, AddressCreateRequestDto addressCreateRequestDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Address address = addressMapper.toEntity(addressCreateRequestDto);
+
+        Optional<Address> existingAddress = addressRepository.findByDetails(
+                address.getStreetLine(),
+                address.getCity(),
+                address.getPostalCode(),
+                address.getCounty(),
+                address.getCountry()
+        );
+
+        if (existingAddress.isPresent()) {
+            user.setDefaultDeliveryAddress(existingAddress.get());
+        } else {
+            Address savedAddress = addressRepository.save(address);
+            user.setDefaultDeliveryAddress(savedAddress);
+        }
+
+        User updatedUser = userRepository.save(user);
+        return UserMapper.INSTANCE.toUserResponseDto(updatedUser);
+    }
+
+    @Transactional
+    public UserResponseDto updateUserBillingAddress(Long id, AddressCreateRequestDto addressCreateRequestDto) {
+        User user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Address address = addressMapper.toEntity(addressCreateRequestDto);
+
+        Optional<Address> existingAddress = addressRepository.findByDetails(
+                address.getStreetLine(),
+                address.getCity(),
+                address.getPostalCode(),
+                address.getCounty(),
+                address.getCountry()
+        );
+
+        if (existingAddress.isPresent()) {
+            user.setDefaultBillingAddress(existingAddress.get());
+        } else {
+            Address savedAddress = addressRepository.save(address);
+            user.setDefaultBillingAddress(savedAddress);
+        }
 
         User updatedUser = userRepository.save(user);
         return UserMapper.INSTANCE.toUserResponseDto(updatedUser);

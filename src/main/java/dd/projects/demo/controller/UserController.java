@@ -1,5 +1,6 @@
 package dd.projects.demo.controller;
 
+import dd.projects.demo.domain.dto.Address.AddressCreateRequestDto;
 import dd.projects.demo.domain.dto.User.*;
 import dd.projects.demo.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,6 +57,26 @@ public class UserController {
     public ResponseEntity<UserResponseDto> updateUserPassword(@PathVariable Long id, @RequestBody UserChangePasswordDto userEditPasswordRequestDto) {
         try {
             UserResponseDto userResponseDto = userService.changeUserPassword(id, userEditPasswordRequestDto);
+            return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/update/{id}/default-delivery-address")
+    public ResponseEntity<UserResponseDto> updateUserDeliveryAddress(@PathVariable Long id, @RequestBody AddressCreateRequestDto addressCreateRequestDto) {
+        try {
+            UserResponseDto userResponseDto = userService.updateUserDeliveryAddress(id, addressCreateRequestDto);
+            return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/update/{id}/default-billing-address")
+    public ResponseEntity<UserResponseDto> updateUserBillingAddress(@PathVariable Long id, @RequestBody AddressCreateRequestDto addressCreateRequestDto) {
+        try {
+            UserResponseDto userResponseDto = userService.updateUserBillingAddress(id, addressCreateRequestDto);
             return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

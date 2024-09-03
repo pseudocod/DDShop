@@ -85,16 +85,16 @@ public class OrderService {
         order.setInvoiceAddress(invoiceAddress);
         order.setTotalPrice(cart.getTotalPrice());
 
+        Order savedOrder = orderRepository.save(order);
+
         if(user.getOrders() == null) {
             user.setOrders(new ArrayList<>());
         }
 
-        user.getOrders().add(order);
+        user.getOrders().add(savedOrder);
         userRepository.save(user);
+
         reduceProductQuantity(cart);
-
-        Order savedOrder = orderRepository.save(order);
-
         clearCart(cart);
 
         try {
