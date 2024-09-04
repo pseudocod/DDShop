@@ -82,4 +82,13 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+    @PutMapping("/update/forgot-password")
+    public ResponseEntity<UserResponseDto> forgotPassword(@RequestBody UserForgotPasswordDto userForgotPasswordDto) {
+        try {
+            UserResponseDto userResponseDto = userService.userForgotPassword(userForgotPasswordDto);
+            return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 }

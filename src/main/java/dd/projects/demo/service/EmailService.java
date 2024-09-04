@@ -104,6 +104,23 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    public void sendForgotPasswordConfirmation(String email) throws MessagingException, IOException {
+        MimeMessage message = mailSender.createMimeMessage();
+
+        message.setFrom(new InternetAddress("support@oricând.com"));
+        message.setRecipients(MimeMessage.RecipientType.TO, email);
+        message.setSubject("Change Password for " + email);;
+
+        String htmlTemplate = readFile("C:\\Users\\mocan\\OneDrive\\Desktop\\DDShop\\demo\\src\\main\\resources\\templates\\templateForSendingForgotPasswordMail.html");
+
+        htmlTemplate = htmlTemplate.replace("${resetLink}", "http://localhost:3000/forgot-password");
+
+        message.setContent(htmlTemplate, "text/html; charset=utf-8");
+
+        mailSender.send(message);
+    }
+
+
     public String readFile(String filePath) throws IOException {
       Path path = Paths.get(filePath);
       return Files.readString(path, StandardCharsets.UTF_8);

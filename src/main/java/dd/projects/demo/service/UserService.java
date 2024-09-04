@@ -193,4 +193,21 @@ public class UserService {
         User updatedUser = userRepository.save(user);
         return UserMapper.INSTANCE.toUserResponseDto(updatedUser);
     }
+
+    @Transactional
+    public UserResponseDto userForgotPassword(UserForgotPasswordDto userForgotPasswordDto) {
+        User user = userRepository.findByEmail(userForgotPasswordDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        String newPassword = PasswordUtils.hashPassword(userForgotPasswordDto.getNewPassword());
+
+        if(user.getPassword().equals(newPassword)) {
+            throw new IllegalArgumentException("New password cannot be the same as the old password");
+        }
+
+        user.setPassword(newPassword);
+        userRepository.save(user);
+
+        return UserMapper.INSTANCE.toUserResponseDto(user);
+    }
 }
